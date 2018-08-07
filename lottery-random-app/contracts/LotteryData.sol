@@ -157,10 +157,16 @@ contract LotteryData is Ownable {
     /* 
      * 获取随机值
      */
-    function getRandomNum() internal {
-        bytes32 blockHash = blockhash(block.number - 1);
-        
+    function getRandomNum(uint lotteryCnt) internal {
+        // bytes32 blockHash = blockhash(block.number - 1);
+        // bytes20 addressBytes = bytes20(msg.sender);
+        // bytes2 lotteryBytes = bytes2(lotteryCnt);
+        // uint joinLength = blockHash.length + 20 + 2;
+        // bytes hashJoin = new bytes(joinLength);
 
+        // for (uint i = 0; i < joinLength; i++) {
+        //     hashJoin[i] = 
+        // }
     }
     
     /* 

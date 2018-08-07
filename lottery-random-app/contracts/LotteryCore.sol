@@ -67,7 +67,7 @@ contract LotteryCore is Ownable, RBAC {
      * 关闭抽奖
      */
     function closeLottery(uint _lotteryId) onlyRole("admin") public {
-        lotteryData.closeLottery(_lotteryId);
+        lotteryData.closeLottery(_lotteryId, "admin close lottery");
     }
 
     /* 
