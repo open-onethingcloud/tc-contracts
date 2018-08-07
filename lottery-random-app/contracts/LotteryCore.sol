@@ -17,6 +17,7 @@ contract LotteryCore is Ownable, RBAC {
         require(_owner != address(0x0));
         require(_lotteryDataAddress != address(0x0));
         lotteryData = LotteryData(_lotteryDataAddress);
+        addRole(_owner, "admin");
     }
 
     /* 

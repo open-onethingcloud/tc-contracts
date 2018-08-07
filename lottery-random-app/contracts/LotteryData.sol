@@ -11,13 +11,13 @@ contract LotteryData is Ownable {
     enum LotteryStatus { Default, Going, Finshed }
 
     struct Prize {
-        string name;        // 奖品名称
-        uint amount;        // 奖品数量
-        uint remainAmount;  // 剩余数量
-        uint probability;   // 概率倒数 （如 1%， 则为 100）
-        address[] winners;   // 中奖用户列表
+        string name;            // 奖品名称
+        uint amount;            // 奖品数量
+        uint remainAmount;      // 剩余数量
+        uint probability;       // 概率倒数 （如 1%， 则为 100）
+        address[] winners;      // 中奖用户列表
         mapping(address => bytes32) winRecords; // 中奖纪录
-        uint[] winProbArray;// 随机数中奖区间
+        uint[] winProbArray;    // 随机数中奖区间
     }
 
     struct Lottery {
@@ -33,6 +33,7 @@ contract LotteryData is Ownable {
 
     event NewLotteryCore(address _lotteryCore);
     event UserDrawInfo(bytes32 hash, uint converHash, uint randomRes);
+    event CloseLottery(uint _lotteryId, string reason);
 
     constructor(address _owner) Ownable(_owner) public {}
 
@@ -40,14 +41,14 @@ contract LotteryData is Ownable {
      * 逻辑合约修饰
      */
     modifier onlyCore() {
-        require(msg.sender == lotteryCore);
+        require(msg.sender == lotteryCore, "Only Core contract modifier");
         _;
     }
 
     /* 
      * 设置抽奖逻辑合约地址
      */
-    function setLotteryCore(address _lotteryCore) onlyOwner public {
+    function setLotteryCore(address _lotteryCore) public onlyOwner {
         lotteryCore = _lotteryCore;
         emit NewLotteryCore(_lotteryCore);
     }
@@ -68,7 +69,7 @@ contract LotteryData is Ownable {
      */
     function addLotteryPrize(uint lotteryId, string _name, uint _amount, uint _probability) external onlyCore {
         Lottery storage lottery = lotteries[lotteryId];
-        require(lottery.status == LotteryStatus.Default);
+        require(lottery.status == LotteryStatus.Default, "lottery status not Default");
         Prize memory prize;
         prize.name = _name;
         prize.amount = _amount;
@@ -97,8 +98,8 @@ contract LotteryData is Ownable {
      */
     function startLottery(uint lotteryId) external onlyCore {
         Lottery storage lottery = lotteries[lotteryId];
-        require(lottery.status == LotteryStatus.Default);
-        require(lottery.prizes.length > 0);
+        require(lottery.status == LotteryStatus.Default, "lottery status not Defalut");
+        require(lottery.prizes.length > 0, "lottery prizes is null");
         lottery.LCM = getLestCommonMulArray(lotteryId);
         uint winProbBegin = 0;
         for (uint i = 0; i < lottery.prizes.length; i++) {
@@ -115,9 +116,10 @@ contract LotteryData is Ownable {
     /* 
      * 关闭抽奖
      */
-    function closeLottery(uint lotteryId) onlyCore external {
+    function closeLottery(uint lotteryId, string reason) public onlyCore {
         Lottery storage lottery = lotteries[lotteryId];
         lottery.status = LotteryStatus.Finshed;
+        emit CloseLottery(lotteryId, reason);
     }
 
     /* 
@@ -125,7 +127,7 @@ contract LotteryData is Ownable {
      */
     function draw(uint lotteryId, address sender) external onlyCore returns(bool) {
         Lottery storage lottery = lotteries[lotteryId];
-        require(lottery.status == LotteryStatus.Going);
+        require(lottery.status == LotteryStatus.Going, "lottery status is not Going");
         lottery.totalDrawCnt ++;
         uint random = uint(blockhash(block.number - 1));
         
@@ -142,7 +144,7 @@ contract LotteryData is Ownable {
                         lottery.totalPrizeAmount --;
 
                         if (lottery.totalPrizeAmount == 0) {
-                            lottery.status = LotteryStatus.Finshed;
+                            closeLottery(lotteryId, "run out of prizes");
                         }
                         return true;
                     }
@@ -150,6 +152,15 @@ contract LotteryData is Ownable {
             }
         }
         return false;
+    }
+
+    /* 
+     * 获取随机值
+     */
+    function getRandomNum() internal {
+        bytes32 blockHash = blockhash(block.number - 1);
+        
+
     }
     
     /* 
@@ -181,6 +192,14 @@ contract LotteryData is Ownable {
             prize.winners,
             prize.winProbArray
         );
+    }
+
+    /* 
+     * 获取抽奖状态
+     */
+    function getLotteryStatus(uint _lotteryId) public view returns(uint) {
+        Lottery storage lottery = lotteries[_lotteryId];
+        return uint(lottery.status);
     }
 
     /* 
