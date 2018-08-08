@@ -14,6 +14,7 @@
 
 - LotteryData合约：抽奖数据合约，记录新建的抽奖、奖品、概率、中奖信息。所有数据的修改只能通过外部逻辑合约执行。
 - LotteryCore合约：可操作抽奖数据合约。可新增admin角色，只有admin角色可执行逻辑合约的抽奖方法。owner角色管理admin角色。
+- LotteryCoreWithRule：带有各种规则限制的抽奖逻辑合约，继承自LotteryCore，在此基础上新增了各种规则限制，开发者可以自定义修改。具体规则可以参考合约里的数据结构注释。
 
 数据逻辑结构分离，基本数据结构固定，外层逻辑更新不影响数据合约。
 
@@ -22,6 +23,28 @@
 1. 使用 owner 地址作初始化参数，部署 LotteryData 合约
 2. 使用 owner 地址和 LotteryData 地址作参数，部署 LotteryCore 合约（构造函数将设置msg.sender为admin）
 3. 调用 LotteryData.setLotteryCore 方法，参数为LotteryCore地址，设置可执行数据合约的逻辑合约地址
+
+### LotteryCore 合约功能操作步骤
+
+1. 部署 LotteryCore 合约时，已设置 owner 同时为 admin 角色
+2. 使用 admin 角色的账户新建抽奖，参数为 _lotteryName，返回 lotteryId
+3. 使用 admin 角色的账户向 id 为 lotteryId 的抽奖新增抽奖奖品，参数为 奖品名称，奖品数量，中奖概率倒数
+4. 重复步骤3，直到奖品设置完毕
+5. 使用 admin 角色的账户开启 id 为 lotteryId 的抽奖活动
+6. 用户参与抽奖，直到抽奖活动出发结束条件（奖品发完 或 admin 角色账户关闭抽奖活动）
+7. 查询 LotteryData getLotteryPrizeInfo 奖品及用户中奖信息
+
+### LotteryData 合约功能操作步骤
+
+1. 根据抽奖id查询抽奖活动信息
+2. 根据抽奖id查询奖品和中奖用户信息
+
+### LotteryCoreWithRule 合约功能操作步骤
+
+注意事项：  
+- 新建合约时的输入参数为 owner地址、lotteryData地址
+- 新建抽奖活动时，活动的起始时间和结束时间都是时间戳，参数 每天抽奖起始时间 和 每天抽奖结束时间 的输入都是整点数的整数值（如8：00则输入8）
+- 每天抽奖起始和结束时间的限制是按照UTC(+8)时区来限制的，其他时区请自行修改参数
 
 ### 关键实现
 

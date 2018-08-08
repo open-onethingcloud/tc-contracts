@@ -1,17 +1,12 @@
 pragma solidity ^0.4.24;
 
-import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "../node_modules/openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol";
-import "./LotteryData.sol";
-import "./Ownable.sol";
+import "./LotteryCore.sol";
 
-contract LotteryCoreWithRules is Ownable, RBAC {
-
-    LotteryData private lotteryData;
+contract LotteryCoreWithRules is LotteryCore {
 
     struct LotteryRule {     
-        uint startTime;         // 抽奖活动起始时间
-        uint endTime;           // 抽奖活动结束时间
+        uint startTime;         // 抽奖活动起始时间戳
+        uint endTime;           // 抽奖活动结束时间戳
         uint daysStartTime;     // 每天抽奖起始时间，0 为不限制
         uint daysEndTime;       // 每天抽奖结束时间，0 为不限制
         uint participateCnt;    // 抽奖活动总次数限制， 0 为不限制
@@ -22,38 +17,7 @@ contract LotteryCoreWithRules is Ownable, RBAC {
     mapping(uint => uint) public participateCnts; // 抽奖参与总人次
     mapping(uint => LotteryRule) public lotteryRules; 
 
-    /* 
-     * 构造函数
-     * params: owner, 数据合约地址
-     */
-    constructor(address _owner, address _lotteryDataAddress) Ownable(_owner) public {
-        require(_owner != address(0x0), "_owner address is 0x00");
-        require(_lotteryDataAddress != address(0x0), "lotteryDataAddress is 0x0");
-        lotteryData = LotteryData(_lotteryDataAddress);
-        addRole(_owner, "admin");
-    }
-
-    /* 
-     * 添加管理员
-     */
-    function addAdmin(address _admin) public onlyOwner {
-        addRole(_admin, "admin");
-    }
-
-    /* 
-     * 移除管理员
-     */
-    function removeAdmin(address _admin) public onlyOwner {
-        removeRole(_admin, "admin");
-    }
-
-    /* 
-     * 升级数据合约地址
-     */
-    function updateLotteryData(address _lotteryDataAddress) public onlyOwner {
-        require(_lotteryDataAddress != address(0x0), "lotteryDataAddress is 0x0");
-        lotteryData = LotteryData(_lotteryDataAddress);
-    }
+    constructor(address _owner, address _lotteryDataAddress) LotteryCore(_owner, _lotteryDataAddress) {}
 
     /* 
      * 新建抽奖
@@ -70,27 +34,6 @@ contract LotteryCoreWithRules is Ownable, RBAC {
         uint _lotteryId = lotteryData.createLottery(_lotteryName);
         LotteryRule memory lotteryRule = LotteryRule(_startTime, _endTime, _daysStartTime, _daysEndTime, _participateCnt, _perAddressPartCnt);
         lotteryRules[_lotteryId] = lotteryRule;
-    }
-
-    /* 
-     * 新增抽奖奖品
-     */
-    function addLotteryPrize(uint _lotteryId, string _prizeName, uint _amount, uint _probability) public onlyRole("admin") {
-        lotteryData.addLotteryPrize(_lotteryId, _prizeName, _amount, _probability);
-    }
-
-    /* 
-     * 启动抽奖
-     */
-    function startLottery(uint _lotteryId) public onlyRole("admin") {
-        lotteryData.startLottery(_lotteryId);
-    } 
-
-    /* 
-     * 关闭抽奖
-     */
-    function closeLottery(uint _lotteryId) public onlyRole("admin") {
-        lotteryData.closeLottery(_lotteryId, "admin close lottery");
     }
 
     /* 
