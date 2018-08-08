@@ -129,7 +129,7 @@ contract LotteryData is Ownable {
         Lottery storage lottery = lotteries[lotteryId];
         require(lottery.status == LotteryStatus.Going, "lottery status is not Going");
         lottery.totalDrawCnt ++;
-        uint random = uint(blockhash(block.number - 1));
+        uint random = getRandomNum(lottery.totalDrawCnt);
         
         uint drawRes = random % lottery.LCM;
         emit UserDrawInfo(blockhash(block.number - 1), random, drawRes);
@@ -156,17 +156,25 @@ contract LotteryData is Ownable {
 
     /* 
      * 获取随机值
+     * 过程：uint(keccak256(拼接字符串 (上一块的blockhash + msg.sender + 全局自增index)))
      */
-    function getRandomNum(uint lotteryCnt) internal {
-        // bytes32 blockHash = blockhash(block.number - 1);
-        // bytes20 addressBytes = bytes20(msg.sender);
-        // bytes2 lotteryBytes = bytes2(lotteryCnt);
-        // uint joinLength = blockHash.length + 20 + 2;
-        // bytes hashJoin = new bytes(joinLength);
-
-        // for (uint i = 0; i < joinLength; i++) {
-        //     hashJoin[i] = 
-        // }
+    function getRandomNum(uint lotteryCnt) internal view returns(uint) {
+        bytes32 blockhashBytes = blockhash(block.number - 1);
+        bytes32 lotteryBytes = bytes32(lotteryCnt);
+        uint joinLength = blockhashBytes.length + 20 + lotteryBytes.length;
+        bytes memory hashJoin = new bytes(joinLength);
+        uint k = 0;
+        for (uint i = 0; i < blockhashBytes.length; i++) {
+            hashJoin[k++] = blockhashBytes[i];
+        }
+        // bytes 拼接 msg.sender 地址
+        for (i = 0; i < 20; i++) {
+            hashJoin[k++] = byte(uint8(uint(msg.sender) / (2 ** (8 * (19 - i))))); 
+        }
+        for (i = 0; i < lotteryBytes.length; i++) {
+            hashJoin[k++] = lotteryBytes[i];
+        }
+        return uint(keccak256(hashJoin));
     }
     
     /* 
