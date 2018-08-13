@@ -17,7 +17,7 @@ contract LotteryCoreWithRules is LotteryCore {
     mapping(uint => uint) public participateCnts; // 抽奖参与总人次
     mapping(uint => LotteryRule) public lotteryRules; 
 
-    constructor(address _owner, address _lotteryDataAddress) LotteryCore(_owner, _lotteryDataAddress) {}
+    constructor(address _owner, address _lotteryDataAddress) LotteryCore(_owner, _lotteryDataAddress) public {}
 
     /* 
      * 新建抽奖
