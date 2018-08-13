@@ -32,7 +32,8 @@ contract LotteryData is Ownable {
     Lottery[] public lotteries;
 
     event NewLotteryCore(address _lotteryCore);
-    event UserDrawInfo(bytes32 hash, uint converHash, uint randomRes);
+    event UserDrawInfo(bytes32 indexed hash, uint indexed random, uint indexed res);
+    event UserDrawPrize(address indexed sender, uint indexed lotteryId, uint indexed prizeId);
     event CloseLottery(uint _lotteryId, string reason);
 
     constructor(address _owner) Ownable(_owner) public {}
@@ -129,7 +130,7 @@ contract LotteryData is Ownable {
         Lottery storage lottery = lotteries[lotteryId];
         require(lottery.status == LotteryStatus.Going, "lottery status is not Going");
         lottery.totalDrawCnt ++;
-        uint random = getRandomNum(lottery.totalDrawCnt);
+        uint random = getRandomNum(sender, lottery.totalDrawCnt);
         
         uint drawRes = random % lottery.LCM;
         emit UserDrawInfo(blockhash(block.number - 1), random, drawRes);
@@ -142,6 +143,7 @@ contract LotteryData is Ownable {
                         prize.winRecords[sender] = blockhash(block.number - 1);
                         prize.remainAmount --;
                         lottery.totalPrizeAmount --;
+                        emit UserDrawPrize(sender, lotteryId, i);
 
                         if (lottery.totalPrizeAmount == 0) {
                             closeLottery(lotteryId, "run out of prizes");
@@ -158,9 +160,9 @@ contract LotteryData is Ownable {
      * 获取随机值
      * 过程：uint(keccak256(拼接字符串 (上一块的blockhash + msg.sender + 全局自增index)))
      */
-    function getRandomNum(uint lotteryCnt) internal view returns(uint) {
+    function getRandomNum(address sender, uint lotteryCnt) internal returns(uint) {
         bytes32 blockhashBytes = blockhash(block.number - 1);
-        bytes32 lotteryBytes = bytes32(lotteryCnt);
+        bytes4 lotteryBytes = bytes4(lotteryCnt);
         uint joinLength = blockhashBytes.length + 20 + lotteryBytes.length;
         bytes memory hashJoin = new bytes(joinLength);
         uint k = 0;
@@ -169,7 +171,7 @@ contract LotteryData is Ownable {
         }
         // bytes 拼接 msg.sender 地址
         for (i = 0; i < 20; i++) {
-            hashJoin[k++] = byte(uint8(uint(msg.sender) / (2 ** (8 * (19 - i))))); 
+            hashJoin[k++] = byte(uint8(uint(sender) / (2 ** (8 * (19 - i))))); 
         }
         for (i = 0; i < lotteryBytes.length; i++) {
             hashJoin[k++] = lotteryBytes[i];
