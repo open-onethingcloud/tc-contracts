@@ -160,7 +160,7 @@ contract LotteryData is Ownable {
      * 获取随机值
      * 过程：uint(keccak256(拼接字符串 (上一块的blockhash + msg.sender + 全局自增index)))
      */
-    function getRandomNum(address sender, uint lotteryCnt) internal returns(uint) {
+    function getRandomNum(address sender, uint lotteryCnt) internal view returns(uint) {
         bytes32 blockhashBytes = blockhash(block.number - 1);
         bytes4 lotteryBytes = bytes4(lotteryCnt);
         uint joinLength = blockhashBytes.length + 20 + lotteryBytes.length;

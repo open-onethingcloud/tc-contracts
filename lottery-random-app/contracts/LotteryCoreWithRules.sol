@@ -34,6 +34,7 @@ contract LotteryCoreWithRules is LotteryCore {
         uint _lotteryId = lotteryData.createLottery(_lotteryName);
         LotteryRule memory lotteryRule = LotteryRule(_startTime, _endTime, _daysStartTime, _daysEndTime, _participateCnt, _perAddressPartCnt);
         lotteryRules[_lotteryId] = lotteryRule;
+        return _lotteryId;
     }
 
     /* 

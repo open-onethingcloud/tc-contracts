@@ -1,7 +1,7 @@
 const LotteryData = artifacts.require('LotteryData')
 const LotteryCore = artifacts.require('LotteryCore')
 
-contract('LotteryCore', (accounts) => {
+contract('Test LotteryCore', (accounts) => {
     let lotteryData, lotteryCore
 
     beforeEach('create instance', async () => {
