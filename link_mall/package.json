@@ -1,0 +1,18 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "链克商城合约示例实现了一个网上商城的部分功能，合约内定义了商品、订单的数据结构与读写方式， 这些数据保存在区块链中，具有不可篡改的去中心化存储特性。",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "zeppelin-solidity": "^1.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
