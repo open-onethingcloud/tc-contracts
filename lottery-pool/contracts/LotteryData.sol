@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
-import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
 contract LotteryData is Ownable {
