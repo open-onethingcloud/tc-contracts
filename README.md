@@ -6,8 +6,10 @@
 
 ### lottery-pool
 
-奖池模型抽奖合约模板
+奖池模型抽奖合约模板  
+[功能说明](./lottery-pool/README.md)
 
 ### lottery-turntale
 
-转盘模型抽奖合约模板
+转盘模型抽奖合约模板  
+[功能说明](./lottery-turntable/README.md)
