@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./Ownable.sol";
 
 
 contract LotteryData is Ownable {
@@ -88,9 +88,7 @@ contract LotteryData is Ownable {
   event JoinLottery(uint lotteryID);
   event OpenLottery(uint lotteryID);
 
-  constructor(address owner)  public {
-    owner = owner;
-  }
+  constructor(address owner)  Ownable(owner) public {}
 
   // 控制合约修饰
   modifier onlyControl() {
@@ -99,7 +97,7 @@ contract LotteryData is Ownable {
   }
 
   // 设置抽奖控制合约地址  
-  function setLotterControl(address lotteryControl)
+  function setLotteryControl(address lotteryControl)
   onlyOwner public {
     lotteryControl_ = lotteryControl;
     emit NewLotteryControl(lotteryControl);
@@ -576,7 +574,7 @@ contract LotteryData is Ownable {
     require(lottery.status == LotteryStatus.Opened || lottery.status == LotteryStatus.Refund);
     uint amount = address(this).balance;
     require (amount > 0, "null balance");
-    owner.transfer(address(this).balance);
+    _owner.transfer(address(this).balance);
     lottery.result.ownerDrawRecord.push(amount);
   }
 } 

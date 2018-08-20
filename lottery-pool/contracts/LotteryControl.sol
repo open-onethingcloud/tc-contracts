@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/ownership/rbac/RBAC.sol";
 
 import "./LotteryData.sol";
+import "./Ownable.sol";
 
 
 contract LotteryControl is Ownable, RBAC {
@@ -17,11 +17,10 @@ contract LotteryControl is Ownable, RBAC {
     接口名称：合约构造函数
     参数说明：owner：抽奖活动管理者账户地址，lotteryDataAddr：数据合约地址
   */
-  constructor(address owner, address lotterDataAddr) public
+  constructor(address owner, address lotterDataAddr) Ownable(owner) public
   {
     require(owner != address(0));
     require(lotterDataAddr != address(0));
-    owner = owner;
     lotteryData_ = LotteryData(lotterDataAddr);
 
     addRole(owner, admin_);
