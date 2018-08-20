@@ -97,7 +97,7 @@ contract LotteryData is Ownable {
   }
 
   // 设置抽奖控制合约地址  
-  function setLotterControl(address lotteryControl)
+  function setLotteryControl(address lotteryControl)
   onlyOwner public {
     lotteryControl_ = lotteryControl;
     emit NewLotteryControl(lotteryControl);
