@@ -460,7 +460,7 @@ contract LotteryData is Ownable {
     //检查抽奖活动每天有效时间
     uint timeHour = (((now / 3600) % 24) + 8) % 24;
     if (config.dayLimit) {
-      if (timeHour < config.dayStartTime || timeHour > config.dayEndTime) {
+      if (timeHour < config.dayStartTime || timeHour >= config.dayEndTime) {
         return (false, "join day time limit");
       }
     }
