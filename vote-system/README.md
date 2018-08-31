@@ -35,7 +35,7 @@
 
 ```
 function newVote(
-  string name          //抽奖活动名称
+  string name          //投票活动名称
   )
   onlyOwner external
   returns (uint)
@@ -97,7 +97,7 @@ function newVote(
     uint voteID,         //投票活动ID
     uint candidateIndex  //候选人Index， 候选人列表中从0开始计算
     )
-    payable isHuman external
+    isHuman external
     returns(
       int,     //返回码， 0：成功  1：活动未开始 2：活动结束 
                           3：不在当天投票时间段内 4：当天投票总次数达到上限 
