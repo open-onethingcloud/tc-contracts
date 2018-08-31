@@ -16,10 +16,10 @@
 
 ### vote-system
 
-投票系统合约模板
+投票系统合约模板  
 [功能说明](./vote-system/README.md)
 
 ### vote-record
 
-投票信息合约模板
+投票信息合约模板  
 [功能说明](./vote-record/README.md)
