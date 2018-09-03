@@ -7,7 +7,8 @@
 ### 合约功能
 
 - 投票信息上链
-- 查看投票信息
+- 查看投票详细信息
+- 查看投票信息列表
 
 
 
@@ -28,16 +29,16 @@
 ```
   //投票信息上链
   function record(
-      string name,                     //投票活动名称
+      bytes32 name,                    //投票活动名称
       string rule,                     //投票规则
-      bytes32[] candidate,             //候选人排名列表， 按得票数降序排列, 候选人数不超过300
-      uint[] voteNum,                  //得票数列表
+      bytes32[] candidates,            //候选人列表
+      uint[] voteNums                  //得票数列表
     )
-    external
+    onlyOwner external
     returns(uint)
 ```
 
-注：传入参数中，用户应保证候选人列表按照得票数降序排序，合约内不会做排序处理； 合约内使用合约方法调用发起方的链克口袋地址作为该投票信息记录者。
+注：传入参数中，用户应保证候选人列表按照得票数降序排序，合约内不会做排序处理
 
 
 
@@ -62,14 +63,14 @@
 接口定义：
 
 ```
-  //投票人信息上链
+  //投票人信息上链, 每上链投票人信息数量不超过100
   function recordVoter(
     uint voteID,                //投票活动ID
     address[] voters,           //投票者账户地址列表
     bytes32[] candidates,       //所投候选人列表
-    uint[] counts               //所投票数
+    uint[] voteNums             //所投票数
     )
-    external
+    onlyOwner external
     returns(bool)
 ```
 
@@ -77,23 +78,54 @@
 
 #### 查看投票信息
 
+调用getVoteNum方法查看合约内投票信息数量
+
+接口定义:
+
+```
+ //查看投票信息数量
+ function getVoteNum()
+    view external
+    returns (uint)
+```
+
+
+
+调用getVoteList方法查看投票信息列表
+
+接口定义：
+
+```
+  //查询投票信息列表
+  function getVoteList(
+    uint startIndex,  //查询投票信息起始位置  (startIndex+num)不大于getVoteNum接口返回的投票信 息数量
+    uint num          //查询投票信息数量, 单次查询数量不超过500
+  )
+    view external
+    returns(
+      uint[],     //投票活动ID列表
+      bytes32[]   //投票活动名称列表
+    )
+```
+
+
+
 用户调用getVoteInfo查看投票信息
 
 接口定义：
 
 ```
-  //查看投票信息
+  //查看投票详细信息
   function getVoteInfo(
-    address recorder,           //信息记录者地址
-  	uint voteID                 //投票活动ID
-  	)
-    external
+    uint voteID                 //投票活动ID
+  )
+    view external
     returns(
-      string,                     //投票活动名称
+      bytes32,                    //投票活动名称
       string,                     //投票规则
       bytes32[],                  //候选人列表
       uint[],                     //得票数列表
-      uint,                       //投票者信息数量
+      uint                        //投票者信息数量
     )
 ```
 
@@ -104,15 +136,13 @@
 接口定义：
 
 ```
-  //查看投票人信息
+   //查看投票人信息
   function getVoterInfo(
-    address recorder,   //信息记录者地址
     uint voteID,        //投票活动ID
-    uint startIndex,    //投票人信息起始位置, 
-    					(startIndex+num)不大于getVoteInfo接口返回的投票者信息数量
+    uint startIndex,    //投票人信息起始位置, (startIndex+num)不大于getVoteInfo接口返回的投票者信息数量
     uint num            //查看投票人信息数量
     )
-    external
+    view external
     returns(
       address[],        //投票者账户地址列表
       bytes32[],        //所投候选人列表
