@@ -18,7 +18,7 @@ contract VoteRecord is Ownable {
 
   //投票人信息
   struct VoterInfo {
-    address voter;         //投票人地址
+    bytes32 voter;         //投票人
     bytes32 candidate;     //所投候选人
     uint voteNum;          //所投票数
   }
@@ -30,7 +30,7 @@ contract VoteRecord is Ownable {
 
   //投票信息上链
   function record(
-      bytes32 name,                     //投票活动名称
+      bytes32 name,                    //投票活动名称
       string rule,                     //投票规则
       bytes32[] candidates,            //候选人列表
       uint[] voteNums                  //得票数列表
@@ -114,7 +114,7 @@ contract VoteRecord is Ownable {
   //投票人信息上链, 每上链投票人信息数量不超过100
   function recordVoter(
     uint voteID,                //投票活动ID
-    address[] voters,           //投票者账户地址列表
+    bytes32[] voters,           //投票人列表
     bytes32[] candidates,       //所投候选人列表
     uint[] voteNums             //所投票数
     )
@@ -169,7 +169,7 @@ contract VoteRecord is Ownable {
     )
     view external
     returns(
-      address[],        //投票者账户地址列表
+      bytes32[],        //投票人列表
       bytes32[],        //所投候选人列表
       uint[]            //所投票数
     )
@@ -179,7 +179,7 @@ contract VoteRecord is Ownable {
     VoteInfo storage info = vote_[voteID];
     require(startIndex >= 0 && num > 0 && startIndex + num <= info.voters.length, "startIndex or num error");
 
-    address[] memory voters = new address[](num);
+    bytes32[] memory voters = new bytes32[](num);
     bytes32[] memory candidates = new bytes32[](num);
     uint[] memory voteNums = new uint[](num);
 
