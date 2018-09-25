@@ -1,0 +1,31 @@
+{
+  "name": "tc-contrcts",
+  "version": "1.0.0",
+  "description": "thunderchain contracts template",
+  "main": "",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "openzeppelin-solidity": "^1.12.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "truffle compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open-onethingcloud/tc-contracts.git"
+  },
+  "keywords": [
+    "contract",
+    "solidity",
+    "thunderchain"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/open-onethingcloud/tc-contracts/issues"
+  },
+  "homepage": "https://github.com/open-onethingcloud/tc-contracts#readme"
+}
