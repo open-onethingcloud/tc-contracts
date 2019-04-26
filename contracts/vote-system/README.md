@@ -15,8 +15,8 @@
 
 ### 合约部署
 
-1. 部署VoteData合约， 合约构造参数为开发者链克口袋账户地址
-2. 部署VoteControl合约，合约构造参数为开发者链克口袋账户地址和VoteData合约地址
+1. 部署VoteData合约， 合约构造参数为开发者口袋账户地址
+2. 部署VoteControl合约，合约构造参数为开发者账户地址和VoteData合约地址
 3. 调用VoteData合约setVoteControlAddr设置VoteControl合约地址
 
 

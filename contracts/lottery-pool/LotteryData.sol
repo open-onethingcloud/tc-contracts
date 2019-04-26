@@ -30,9 +30,9 @@ contract LotteryData is Ownable {
     bool dayLimit;          //是否限制每天抽奖时间 
     uint dayStartTime;      //每天抽奖开始时间 单位：小时
     uint dayEndTime;        //每天抽奖结束时间 单位：小时
-    int timesPerItem;       //每个链克地址抽奖次数限制  -1表示不限制次数
-    uint amountPerAction;   //单次抽奖金额 单位：链克
-    uint openCondition;     //开奖条件 抽奖模式为Sum:奖池金额达到指定数量(单位：链克)  Time:指定时刻开奖(单位：秒)  Address:参与账户地址达到指定数量
+    int timesPerItem;       //每个地址抽奖次数限制  -1表示不限制次数
+    uint amountPerAction;   //单次抽奖金额 单位：eth
+    uint openCondition;     //开奖条件 抽奖模式为Sum:奖池金额达到指定数量(单位：eth)  Time:指定时刻开奖(单位：秒)  Address:参与账户地址达到指定数量
     uint copies;            //总奖池被分成几份
    
     uint totalAward;        //奖池条件达成时的总金额  单位：Wei
@@ -506,8 +506,8 @@ contract LotteryData is Ownable {
     if (dayLimit) {
       require(dayStartTime < dayEndTime, "dayStartTime or dayEndTime error" );
     }
-    require(amountPerAction <= 10, "amountPerAction error");  //单次抽奖金额设置最大10链克
-    require(copies > 0 && copies <= 100, "copies error"); // 奖池全部链克平分份数最大为100份
+    require(amountPerAction <= 10, "amountPerAction error");  //单次抽奖金额设置最大10eth
+    require(copies > 0 && copies <= 100, "copies error"); // 奖池全部token平分份数最大为100份
 
 
     //开奖时间固定模式下， 开奖时间设置要求大于抽奖结束时间
